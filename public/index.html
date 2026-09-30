@@ -227,3 +227,54 @@
             </div>
         </section>
     </main>
+
+    <script>
+        const form = document.getElementById("search-form");
+        const input = document.getElementById("location-input");
+        const button = document.getElementById("search-button");
+        const status = document.getElementById("status");
+        const dataGrid = document.getElementById("data-grid");
+        const resultLabel = document.getElementById("result-label");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const location = input.value.trim();
+            if (!location) return;
+
+            button.disabled = true;
+            status.classList.remove("error");
+            status.textContent = "Mencari data lokasi...";
+            resultLabel.textContent = "Memuat";
+
+            try {
+                const response = await fetch(`/api/lokasi?lokasi=${encodeURIComponent(location)}`);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Pencarian gagal.");
+
+                const values = {
+                    "result-location": data.lokasi,
+                    "result-country": data.negara,
+                    "result-province": data.provinsi,
+                    "result-district": data.kecamatan,
+                    "result-longitude": data.longitude,
+                    "result-latitude": data.latitude
+                };
+
+                Object.entries(values).forEach(([id, value]) => {
+                    document.getElementById(id).textContent = value ?? "Tidak tersedia";
+                });
+                dataGrid.hidden = false;
+                status.textContent = "Data berhasil ditemukan.";
+                resultLabel.textContent = "Hasil pencarian";
+            } catch (error) {
+                dataGrid.hidden = true;
+                status.classList.add("error");
+                status.textContent = error.message || "Terjadi kesalahan saat mencari lokasi.";
+                resultLabel.textContent = "Pencarian gagal";
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
