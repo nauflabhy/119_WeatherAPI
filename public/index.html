@@ -8,3 +8,185 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+        :root {
+            color-scheme: light;
+            --ink: #20342d;
+            --muted: #718078;
+            --paper: #f3f5ef;
+            --line: #dce3d9;
+            --green: #285b45;
+            --lime: #d2ed73;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 24px;
+            color: var(--ink);
+            background-color: var(--paper);
+            background-image: radial-gradient(#cbd6ca 0.7px, transparent 0.7px);
+            background-size: 18px 18px;
+            font-family: "DM Sans", sans-serif;
+        }
+
+        main {
+            width: min(100%, 680px);
+            margin: 0 auto;
+        }
+
+        .identity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 0 2px 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .identity strong { color: var(--ink); font-weight: 600; }
+
+        .identity .course {
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .panel {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fffefa;
+            box-shadow: 0 16px 42px #284b3812;
+            animation: arrive 450ms ease-out both;
+        }
+
+        .intro {
+            padding: 34px 36px 30px;
+            color: #f7f8f1;
+            background: var(--green);
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--lime);
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(28px, 6vw, 38px);
+            line-height: 1.12;
+            font-weight: 600;
+        }
+
+        .description {
+            margin: 10px 0 0;
+            color: #d2dfd3;
+            font-size: 14px;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        input {
+            min-width: 0;
+            flex: 1;
+            height: 48px;
+            padding: 0 15px;
+            border: 1px solid #ffffff66;
+            border-radius: 5px;
+            outline: none;
+            color: white;
+            background: #ffffff12;
+            font: inherit;
+        }
+
+        input::placeholder { color: #c3d3c5; }
+        input:focus { border-color: var(--lime); box-shadow: 0 0 0 3px #d2ed7330; }
+
+        button {
+            min-width: 116px;
+            height: 48px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 5px;
+            color: var(--ink);
+            background: var(--lime);
+            font: 700 14px "DM Sans", sans-serif;
+            cursor: pointer;
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        button:hover { background: #def591; transform: translateY(-1px); }
+        button:disabled { cursor: wait; opacity: 0.72; transform: none; }
+
+        .results { padding: 27px 36px 32px; }
+
+        .result-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .result-heading h2 { margin: 0; font-size: 16px; font-weight: 600; }
+        .result-heading span { color: var(--muted); font-size: 12px; }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin: 0;
+        }
+
+        .data-item {
+            min-width: 0;
+            padding: 19px 12px 17px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .data-item:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--line); }
+        .data-item dt { margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+        .data-item dd { margin: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; }
+        .data-item.coordinates dd { font-family: "Space Mono", monospace; font-size: 13px; }
+
+        .status {
+            min-height: 20px;
+            margin: 16px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .status.error { color: #a43f32; }
+        [hidden] { display: none !important; }
+
+        @keyframes arrive {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 520px) {
+            body { padding: 24px 15px; }
+            .identity { align-items: flex-start; font-size: 12px; }
+            .intro { padding: 27px 22px 24px; }
+            .results { padding: 23px 22px 26px; }
+            form { gap: 8px; }
+            button { min-width: 96px; padding: 0 10px; }
+        }
+
+        @media (max-width: 370px) {
+            form { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
