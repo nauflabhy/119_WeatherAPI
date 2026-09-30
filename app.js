@@ -3,50 +3,86 @@ const axios = require('axios');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/api/lokasi", async (req, res) => {
-    const lokasi = String(req.query.lokasi || "").trim();
+
+    const lokasi = req.query.lokasi;
+
+    const apiKey = "TmW3n2IbOKaZxkghOoYB";
 
     if (!lokasi) {
-        return res.status(400).json({ message: "Masukkan nama lokasi terlebih dahulu." });
+        return res.status(400).json({
+            message: "Lokasi belum diisi"
+        });
     }
 
-    const apikey = "TmW3n2IbOKaZxkghOoYB";
-
-    const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(lokasi)}.json?key=${apikey}&limit=1&language=id`;
+    const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(lokasi)}.json?key=${apiKey}`;
 
     try {
-        const response = await axios.get(url);
-        const feature = response.data.features?.[0];
 
-        if (!feature) {
-            return res.status(404).json({ message: `Lokasi "${lokasi}" tidak ditemukan.` });
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (!data.features || data.features.length === 0) {
+            return res.status(404).json({
+                message: "Lokasi tidak ditemukan"
+            });
         }
 
-        const context = feature.context || [];
-        const findContext = (types) => context.find((item) =>
-            types.some((type) => item.id?.startsWith(`${type}.`))
-        )?.text || null;
-        const coordinates = feature.center || feature.geometry?.coordinates || [];
+        const tempat = data.features[0];
+
+        const koordinat = tempat.geometry.coordinates;
+
+        let negara = "-";
+        let provinsi = "-";
+        let kecamatan = "-";
+
+        if (tempat.context) {
+
+            tempat.context.forEach(item => {
+
+                if (item.id.startsWith("country")) {
+                    negara = item.text;
+                }
+
+                if (item.id.startsWith("region")) {
+                    provinsi = item.text;
+                }
+
+                if (
+                    item.id.startsWith("county") ||
+                    item.id.startsWith("municipal_district") ||
+                    item.id.startsWith("municipality")
+                ) {
+                    kecamatan = item.text;
+                }
+
+            });
+
+        }
 
         res.json({
-            lokasi: feature.matching_text || feature.text || feature.place_name || lokasi,
-            negara: findContext(["country"]),
-            provinsi: findContext(["region", "province", "state"]),
-            kecamatan: findContext(["district", "county", "municipality"]),
-            longitude: coordinates[0] ?? null,
-            latitude: coordinates[1] ?? null
+            lokasi: tempat.place_name,
+            negara: negara,
+            provinsi: provinsi,
+            kecamatan: kecamatan,
+            longitude: koordinat[0],
+            latitude: koordinat[1]
         });
+
     } catch (error) {
-        console.error("MapTiler error:", error.message);
+
+        console.error(error.message);
+
         res.status(500).json({
-            message: "Gagal mengambil data dari MapTiler. Periksa koneksi atau API key."
+            message: "Gagal mengambil data dari MapTiler"
         });
+
     }
+
 });
 
 app.listen(PORT, () => {

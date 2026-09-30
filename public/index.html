@@ -3,278 +3,798 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f3f5ef">
-    <title>Temukan Lokasi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-        :root {
-            color-scheme: light;
-            --ink: #20342d;
-            --muted: #718078;
-            --paper: #f3f5ef;
-            --line: #dce3d9;
-            --green: #285b45;
-            --lime: #d2ed73;
-        }
 
-        * { box-sizing: border-box; }
+    <title>Location Finder - MapTiler API</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
         body {
-            min-width: 320px;
             min-height: 100vh;
-            margin: 0;
-            padding: 40px 24px;
-            color: var(--ink);
-            background-color: var(--paper);
-            background-image: radial-gradient(#cbd6ca 0.7px, transparent 0.7px);
-            background-size: 18px 18px;
-            font-family: "DM Sans", sans-serif;
+            background:
+                radial-gradient(circle at top left, #3b82f6 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #8b5cf6 0%, transparent 35%),
+                #0f172a;
+            color: white;
+            padding: 30px;
         }
 
-        main {
-            width: min(100%, 680px);
-            margin: 0 auto;
+        .container {
+            max-width: 1100px;
+            margin: auto;
         }
 
-        .identity {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            padding: 0 2px 22px;
-            color: var(--muted);
-            font-size: 13px;
+        /* HEADER */
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .identity strong { color: var(--ink); font-weight: 600; }
-
-        .identity .course {
-            font-family: "Space Mono", monospace;
-            font-size: 11px;
-            text-align: right;
+        .header .icon {
+            font-size: 55px;
+            margin-bottom: 10px;
         }
 
-        .panel {
-            overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: #fffefa;
-            box-shadow: 0 16px 42px #284b3812;
-            animation: arrive 450ms ease-out both;
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 8px;
         }
 
-        .intro {
-            padding: 34px 36px 30px;
-            color: #f7f8f1;
-            background: var(--green);
+        .header p {
+            color: #cbd5e1;
+            font-size: 16px;
         }
 
-        .eyebrow {
-            margin: 0 0 10px;
-            color: var(--lime);
-            font-family: "Space Mono", monospace;
-            font-size: 11px;
-            text-transform: uppercase;
+        /* SEARCH */
+
+        .search-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(28px, 6vw, 38px);
-            line-height: 1.12;
-            font-weight: 600;
+        .search-card label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+            font-weight: bold;
         }
 
-        .description {
-            margin: 10px 0 0;
-            color: #d2dfd3;
-            font-size: 14px;
-        }
-
-        form {
+        .search-box {
             display: flex;
             gap: 10px;
-            margin-top: 25px;
         }
 
-        input {
-            min-width: 0;
+        .search-box input {
             flex: 1;
-            height: 48px;
-            padding: 0 15px;
-            border: 1px solid #ffffff66;
-            border-radius: 5px;
+            padding: 15px 18px;
+            border: none;
             outline: none;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             color: white;
-            background: #ffffff12;
-            font: inherit;
-        }
-
-        input::placeholder { color: #c3d3c5; }
-        input:focus { border-color: var(--lime); box-shadow: 0 0 0 3px #d2ed7330; }
-
-        button {
-            min-width: 116px;
-            height: 48px;
-            padding: 0 16px;
-            border: 0;
-            border-radius: 5px;
-            color: var(--ink);
-            background: var(--lime);
-            font: 700 14px "DM Sans", sans-serif;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 150ms ease, transform 150ms ease;
+            transition: 0.2s;
         }
 
-        button:hover { background: #def591; transform: translateY(-1px); }
-        button:disabled { cursor: wait; opacity: 0.72; transform: none; }
-
-        .results { padding: 27px 36px 32px; }
-
-        .result-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 16px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid var(--line);
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59,130,246,0.4);
         }
 
-        .result-heading h2 { margin: 0; font-size: 16px; font-weight: 600; }
-        .result-heading span { color: var(--muted); font-size: 12px; }
+        .search-box button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* STATUS */
+
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .loading {
+            display: block !important;
+            background: rgba(59,130,246,0.15);
+            color: #93c5fd;
+        }
+
+        .error {
+            display: block !important;
+            background: rgba(239,68,68,0.15);
+            color: #fca5a5;
+        }
+
+        .success {
+            display: block !important;
+            background: rgba(34,197,94,0.15);
+            color: #86efac;
+        }
+
+        /* LOCATION */
+
+        .location-title {
+            margin: 30px 0 15px;
+            font-size: 22px;
+        }
+
+        .location-name {
+            background: linear-gradient(
+                135deg,
+                rgba(59,130,246,0.25),
+                rgba(139,92,246,0.25)
+            );
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .location-name small {
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .location-name h2 {
+            font-size: 28px;
+        }
+
+        /* DATA GRID */
 
         .data-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin: 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .data-item {
-            min-width: 0;
-            padding: 19px 12px 17px 0;
-            border-bottom: 1px solid var(--line);
+        .data-card {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 18px;
+            padding: 22px;
+            transition: 0.25s;
         }
 
-        .data-item:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--line); }
-        .data-item dt { margin-bottom: 7px; color: var(--muted); font-size: 12px; }
-        .data-item dd { margin: 0; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; }
-        .data-item.coordinates dd { font-family: "Space Mono", monospace; font-size: 13px; }
+        .data-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.12);
+        }
 
-        .status {
-            min-height: 20px;
-            margin: 16px 0 0;
-            color: var(--muted);
+        .data-card::after {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            right: -25px;
+            top: -25px;
+            background: rgba(59,130,246,0.15);
+        }
+
+        .data-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .data-label {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            font-size: 20px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        /* COORDINATE */
+
+        .coordinate {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* JSON */
+
+        .json-section {
+            margin-top: 30px;
+        }
+
+        .json-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .json-header h2 {
+            font-size: 22px;
+        }
+
+        .copy-btn {
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .json-box {
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-x: auto;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        pre {
+            color: #a7f3d0;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* EMPTY */
+
+        #result {
+            display: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #64748b;
             font-size: 13px;
         }
 
-        .status.error { color: #a43f32; }
-        [hidden] { display: none !important; }
+        /* RESPONSIVE */
 
-        @keyframes arrive {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @media (max-width: 700px) {
 
-        @media (max-width: 520px) {
-            body { padding: 24px 15px; }
-            .identity { align-items: flex-start; font-size: 12px; }
-            .intro { padding: 27px 22px 24px; }
-            .results { padding: 23px 22px 26px; }
-            form { gap: 8px; }
-            button { min-width: 96px; padding: 0 10px; }
-        }
+            body {
+                padding: 15px;
+            }
 
-        @media (max-width: 370px) {
-            form { flex-direction: column; }
-            button { width: 100%; }
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box button {
+                padding: 14px;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .coordinate {
+                grid-column: span 1;
+                grid-template-columns: 1fr;
+            }
         }
     </style>
+</head>
 
-    </head>
 <body>
-    <main>
-        <header class="identity">
-            <div><strong>Muhammad Naufal Abhyasa</strong><br>NIM 20240140119</div>
-            <div class="course">PWS / PRAKTIKUM 03</div>
-        </header>
 
-        <section class="panel" aria-labelledby="page-title">
-            <div class="intro">
-                <p class="eyebrow">Eksplorasi geografi</p>
-                <h1 id="page-title">Temukan sebuah lokasi.</h1>
-                <p class="description">Cari tempat dan lihat detail wilayah serta koordinatnya.</p>
-                <form id="search-form">
-                    <input id="location-input" name="lokasi" type="search" placeholder="Contoh: Yogyakarta" autocomplete="off" required aria-label="Nama lokasi">
-                    <button id="search-button" type="submit">Cari lokasi <span aria-hidden="true">→</span></button>
-                </form>
-            </div>
+<div class="container">
 
-            <div class="results">
-                <div class="result-heading">
-                    <h2>Detail lokasi</h2>
-                    <span id="result-label">Menunggu pencarian</span>
+    <!-- HEADER -->
+
+    <div class="header">
+        <div class="icon">🌍</div>
+
+        <h1>Location Finder</h1>
+
+        <p>
+            Cari lokasi menggunakan MapTiler Geocoding API
+        </p>
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-card">
+
+        <label for="lokasi">
+            📍 Masukkan Lokasi
+        </label>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="lokasi"
+                placeholder="Contoh: Yogyakarta"
+                autocomplete="off"
+            >
+
+            <button id="btnCari" onclick="cariLokasi()">
+                🔎 Cari
+            </button>
+
+        </div>
+
+        <div id="status"></div>
+
+    </div>
+
+
+    <!-- EMPTY STATE -->
+
+    <div id="emptyState" class="empty">
+
+        <div class="empty-icon">
+            🗺️
+        </div>
+
+        <h2>Belum ada lokasi</h2>
+
+        <p>
+            Masukkan nama kota atau lokasi untuk mendapatkan informasi.
+        </p>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="result">
+
+        <div class="location-title">
+            📌 Hasil Pencarian
+        </div>
+
+
+        <!-- LOCATION NAME -->
+
+        <div class="location-name">
+
+            <small>LOKASI</small>
+
+            <h2 id="hasilLokasi">
+                -
+            </h2>
+
+        </div>
+
+
+        <!-- DATA -->
+
+        <div class="data-grid">
+
+            <div class="data-card">
+
+                <div class="data-icon">
+                    🌎
                 </div>
-                <dl class="data-grid" id="data-grid" hidden>
-                    <div class="data-item"><dt>Lokasi</dt><dd id="result-location">-</dd></div>
-                    <div class="data-item"><dt>Negara</dt><dd id="result-country">-</dd></div>
-                    <div class="data-item"><dt>Provinsi</dt><dd id="result-province">-</dd></div>
-                    <div class="data-item"><dt>Kecamatan</dt><dd id="result-district">-</dd></div>
-                    <div class="data-item coordinates"><dt>Longitude</dt><dd id="result-longitude">-</dd></div>
-                    <div class="data-item coordinates"><dt>Latitude</dt><dd id="result-latitude">-</dd></div>
-                </dl>
-                <p class="status" id="status" role="status" aria-live="polite">Masukkan nama kota atau tempat untuk memulai.</p>
+
+                <div class="data-label">
+                    NEGARA
+                </div>
+
+                <div class="data-value" id="negara">
+                    -
+                </div>
+
             </div>
-        </section>
-    </main>
 
-    <script>
-        const form = document.getElementById("search-form");
-        const input = document.getElementById("location-input");
-        const button = document.getElementById("search-button");
+
+            <div class="data-card">
+
+                <div class="data-icon">
+                    🏛️
+                </div>
+
+                <div class="data-label">
+                    PROVINSI
+                </div>
+
+                <div class="data-value" id="provinsi">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <div class="data-icon">
+                    🏘️
+                </div>
+
+                <div class="data-label">
+                    KECAMATAN
+                </div>
+
+                <div class="data-value" id="kecamatan">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <div class="data-icon">
+                    📍
+                </div>
+
+                <div class="data-label">
+                    KOORDINAT
+                </div>
+
+                <div class="data-value">
+                    <span id="longitude">-</span>,
+                    <span id="latitude">-</span>
+                </div>
+
+            </div>
+
+
+            <div class="coordinate">
+
+                <div class="data-card">
+
+                    <div class="data-icon">
+                        ↔️
+                    </div>
+
+                    <div class="data-label">
+                        LONGITUDE
+                    </div>
+
+                    <div class="data-value" id="longitude2">
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="data-card">
+
+                    <div class="data-icon">
+                        ↕️
+                    </div>
+
+                    <div class="data-label">
+                        LATITUDE
+                    </div>
+
+                    <div class="data-value" id="latitude2">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- JSON -->
+
+        <div class="json-section">
+
+            <div class="json-header">
+
+                <h2>
+                    💻 JSON Response
+                </h2>
+
+                <button
+                    class="copy-btn"
+                    onclick="copyJSON()"
+                >
+                    📋 Copy JSON
+                </button>
+
+            </div>
+
+
+            <div class="json-box">
+
+                <pre id="jsonOutput">
+{}
+                </pre>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+        Location Finder • Express.js + Axios + MapTiler API
+    </footer>
+
+</div>
+
+
+<script>
+
+    let jsonData = null;
+
+
+    async function cariLokasi() {
+
+        const input = document.getElementById("lokasi");
+        const button = document.getElementById("btnCari");
         const status = document.getElementById("status");
-        const dataGrid = document.getElementById("data-grid");
-        const resultLabel = document.getElementById("result-label");
 
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const location = input.value.trim();
-            if (!location) return;
+        const lokasi = input.value.trim();
 
-            button.disabled = true;
-            status.classList.remove("error");
-            status.textContent = "Mencari data lokasi...";
-            resultLabel.textContent = "Memuat";
 
-            try {
-                const response = await fetch(`/api/lokasi?lokasi=${encodeURIComponent(location)}`);
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.message || "Pencarian gagal.");
+        // Jika input kosong
 
-                const values = {
-                    "result-location": data.lokasi,
-                    "result-country": data.negara,
-                    "result-province": data.provinsi,
-                    "result-district": data.kecamatan,
-                    "result-longitude": data.longitude,
-                    "result-latitude": data.latitude
-                };
+        if (!lokasi) {
 
-                Object.entries(values).forEach(([id, value]) => {
-                    document.getElementById(id).textContent = value ?? "Tidak tersedia";
-                });
-                dataGrid.hidden = false;
-                status.textContent = "Data berhasil ditemukan.";
-                resultLabel.textContent = "Hasil pencarian";
-            } catch (error) {
-                dataGrid.hidden = true;
-                status.classList.add("error");
-                status.textContent = error.message || "Terjadi kesalahan saat mencari lokasi.";
-                resultLabel.textContent = "Pencarian gagal";
-            } finally {
-                button.disabled = false;
+            tampilStatus(
+                "⚠️ Silakan masukkan nama lokasi terlebih dahulu.",
+                "error"
+            );
+
+            input.focus();
+
+            return;
+        }
+
+
+        // Loading
+
+        button.disabled = true;
+        button.innerHTML = "⏳ Mencari...";
+
+        tampilStatus(
+            "🔄 Sedang mengambil data lokasi...",
+            "loading"
+        );
+
+
+        try {
+
+            /*
+                Memanggil endpoint Express kita sendiri.
+
+                Contoh:
+
+                /api/lokasi?lokasi=Yogyakarta
+
+                Express kemudian yang mengambil
+                data dari MapTiler.
+            */
+
+            const response = await fetch(
+                `/api/lokasi?lokasi=${encodeURIComponent(lokasi)}`
+            );
+
+
+            const data = await response.json();
+
+
+            // Jika server mengembalikan error
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message || "Lokasi tidak ditemukan"
+                );
+
             }
+
+
+            // Simpan JSON
+
+            jsonData = data;
+
+
+            // Tampilkan hasil
+
+            document.getElementById("hasilLokasi").textContent =
+                data.lokasi || "-";
+
+            document.getElementById("negara").textContent =
+                data.negara || "-";
+
+            document.getElementById("provinsi").textContent =
+                data.provinsi || "-";
+
+            document.getElementById("kecamatan").textContent =
+                data.kecamatan || "-";
+
+            document.getElementById("longitude").textContent =
+                data.longitude ?? "-";
+
+            document.getElementById("latitude").textContent =
+                data.latitude ?? "-";
+
+            document.getElementById("longitude2").textContent =
+                data.longitude ?? "-";
+
+            document.getElementById("latitude2").textContent =
+                data.latitude ?? "-";
+
+
+            // Tampilkan JSON
+
+            document.getElementById("jsonOutput").textContent =
+                JSON.stringify(data, null, 4);
+
+
+            // Tampilkan result
+
+            document.getElementById("emptyState").style.display =
+                "none";
+
+            document.getElementById("result").style.display =
+                "block";
+
+
+            tampilStatus(
+                "✅ Data lokasi berhasil ditemukan!",
+                "success"
+            );
+
+        }
+
+
+        catch (error) {
+
+            console.error(error);
+
+
+            document.getElementById("result").style.display =
+                "none";
+
+            document.getElementById("emptyState").style.display =
+                "block";
+
+
+            tampilStatus(
+                "❌ " + error.message,
+                "error"
+            );
+
+        }
+
+
+        finally {
+
+            button.disabled = false;
+
+            button.innerHTML = "🔎 Cari";
+
+        }
+
+    }
+
+
+    function tampilStatus(pesan, tipe) {
+
+        const status =
+            document.getElementById("status");
+
+        status.textContent = pesan;
+
+        status.className = tipe;
+
+    }
+
+
+    async function copyJSON() {
+
+        if (!jsonData) {
+            return;
+        }
+
+
+        try {
+
+            await navigator.clipboard.writeText(
+                JSON.stringify(jsonData, null, 4)
+            );
+
+
+            const button =
+                document.querySelector(".copy-btn");
+
+            const teksLama =
+                button.innerHTML;
+
+
+            button.innerHTML =
+                "✅ Copied!";
+
+
+            setTimeout(() => {
+
+                button.innerHTML =
+                    teksLama;
+
+            }, 1500);
+
+        }
+
+        catch (error) {
+
+            alert("Gagal menyalin JSON.");
+
+        }
+
+    }
+
+
+    // Tekan ENTER untuk mencari
+
+    document
+        .getElementById("lokasi")
+        .addEventListener("keydown", function(event) {
+
+            if (event.key === "Enter") {
+
+                cariLokasi();
+
+            }
+
         });
-    </script>
+
+</script>
+
 </body>
 </html>
