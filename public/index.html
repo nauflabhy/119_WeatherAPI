@@ -1,5 +1,7 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +9,23 @@
     <title>Location Finder - MapTiler API</title>
 
     <style>
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background:
-                radial-gradient(circle at top left, #3b82f6 0%, transparent 35%),
-                radial-gradient(circle at bottom right, #8b5cf6 0%, transparent 35%),
-                #0f172a;
-            color: white;
             padding: 30px;
+            background: #0f172a;
+            color: white;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 900px;
             margin: auto;
         }
 
@@ -33,41 +33,46 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .header .icon {
-            font-size: 55px;
-            margin-bottom: 10px;
+            font-size: 45px;
         }
 
         .header h1 {
-            font-size: 38px;
-            margin-bottom: 8px;
+            margin: 8px 0;
+            font-size: 32px;
         }
 
         .header p {
+            color: #94a3b8;
+        }
+
+        .student {
+            margin-top: 15px;
             color: #cbd5e1;
-            font-size: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .student strong {
+            color: white;
         }
 
         /* SEARCH */
 
         .search-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
         .search-card label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #cbd5e1;
-            font-weight: bold;
         }
 
         .search-box {
@@ -77,273 +82,221 @@
 
         .search-box input {
             flex: 1;
-            padding: 15px 18px;
+            padding: 13px;
             border: none;
+            border-radius: 8px;
             outline: none;
-            border-radius: 12px;
-            background: #f8fafc;
-            color: #0f172a;
             font-size: 16px;
         }
 
         .search-box button {
+            padding: 13px 20px;
             border: none;
-            padding: 0 25px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            background: #2563eb;
             color: white;
-            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .search-box button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59,130,246,0.4);
+            background: #1d4ed8;
         }
 
         .search-box button:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
         /* STATUS */
 
         #status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 10px;
             display: none;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
         }
 
         .loading {
             display: block !important;
-            background: rgba(59,130,246,0.15);
-            color: #93c5fd;
-        }
-
-        .error {
-            display: block !important;
-            background: rgba(239,68,68,0.15);
-            color: #fca5a5;
+            background: #1e40af;
         }
 
         .success {
             display: block !important;
-            background: rgba(34,197,94,0.15);
-            color: #86efac;
+            background: #166534;
         }
 
-        /* LOCATION */
-
-        .location-title {
-            margin: 30px 0 15px;
-            font-size: 22px;
+        .error {
+            display: block !important;
+            background: #991b1b;
         }
 
-        .location-name {
-            background: linear-gradient(
-                135deg,
-                rgba(59,130,246,0.25),
-                rgba(139,92,246,0.25)
-            );
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            padding: 25px;
-            margin-bottom: 20px;
+        /* EMPTY */
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
         }
 
-        .location-name small {
+        .empty-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* RESULT */
+
+        #result {
+            display: none;
+        }
+
+        .title {
+            margin: 25px 0 10px;
+            font-size: 20px;
+        }
+
+        .location {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .location small {
             color: #94a3b8;
-            display: block;
-            margin-bottom: 8px;
         }
 
-        .location-name h2 {
-            font-size: 28px;
+        .location h2 {
+            margin-top: 7px;
         }
 
-        /* DATA GRID */
+        /* DATA */
 
         .data-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
         }
 
         .data-card {
-            position: relative;
-            overflow: hidden;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 18px;
-            padding: 22px;
-            transition: 0.25s;
-        }
-
-        .data-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.12);
-        }
-
-        .data-card::after {
-            content: "";
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            right: -25px;
-            top: -25px;
-            background: rgba(59,130,246,0.15);
+            background: #1e293b;
+            padding: 18px;
+            border-radius: 12px;
         }
 
         .data-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
+            font-size: 25px;
         }
 
         .data-label {
+            margin-top: 8px;
             color: #94a3b8;
             font-size: 13px;
-            margin-bottom: 5px;
         }
 
         .data-value {
-            font-size: 20px;
+            margin-top: 5px;
+            font-size: 18px;
             font-weight: bold;
             word-break: break-word;
-        }
-
-        /* COORDINATE */
-
-        .coordinate {
-            grid-column: span 2;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
         }
 
         /* JSON */
 
         .json-section {
-            margin-top: 30px;
+            margin-top: 25px;
         }
 
         .json-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .json-header h2 {
-            font-size: 22px;
+            margin-bottom: 10px;
         }
 
         .copy-btn {
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.08);
+            padding: 8px 12px;
+            border: none;
+            border-radius: 7px;
+            background: #334155;
             color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
             cursor: pointer;
-        }
-
-        .copy-btn:hover {
-            background: rgba(255,255,255,0.15);
         }
 
         .json-box {
             background: #020617;
-            border: 1px solid #1e293b;
-            border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
+            border-radius: 10px;
             overflow-x: auto;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
         }
 
         pre {
-            color: #a7f3d0;
+            color: #86efac;
             font-family: Consolas, monospace;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
             white-space: pre-wrap;
-        }
-
-        /* EMPTY */
-
-        #result {
-            display: none;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-        }
-
-        .empty-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
         }
 
         /* FOOTER */
 
         footer {
             text-align: center;
-            margin-top: 35px;
+            margin-top: 30px;
             color: #64748b;
             font-size: 13px;
         }
 
-        /* RESPONSIVE */
+        /* MOBILE */
 
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
 
             body {
                 padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 28px;
             }
 
             .search-box {
                 flex-direction: column;
             }
 
-            .search-box button {
-                padding: 14px;
-            }
-
             .data-grid {
                 grid-template-columns: 1fr;
             }
 
-            .coordinate {
-                grid-column: span 1;
-                grid-template-columns: 1fr;
-            }
         }
+
     </style>
 </head>
+
 
 <body>
 
 <div class="container">
 
+
     <!-- HEADER -->
 
     <div class="header">
+
         <div class="icon">🌍</div>
 
         <h1>Location Finder</h1>
 
         <p>
-            Cari lokasi menggunakan MapTiler Geocoding API
+            Pencarian lokasi menggunakan MapTiler API
         </p>
+
+        <div class="student">
+
+            <strong>
+                Nama: Muhammad Naufal Abhyasa
+            </strong>
+
+            <br>
+
+            NIM: 20240140119
+
+        </div>
+
     </div>
 
 
@@ -364,7 +317,10 @@
                 autocomplete="off"
             >
 
-            <button id="btnCari" onclick="cariLokasi()">
+            <button
+                id="btnCari"
+                onclick="cariLokasi()"
+            >
                 🔎 Cari
             </button>
 
@@ -375,7 +331,7 @@
     </div>
 
 
-    <!-- EMPTY STATE -->
+    <!-- EMPTY -->
 
     <div id="emptyState" class="empty">
 
@@ -386,7 +342,7 @@
         <h2>Belum ada lokasi</h2>
 
         <p>
-            Masukkan nama kota atau lokasi untuk mendapatkan informasi.
+            Masukkan nama kota atau lokasi untuk mencari data.
         </p>
 
     </div>
@@ -396,20 +352,18 @@
 
     <div id="result">
 
-        <div class="location-title">
+        <div class="title">
             📌 Hasil Pencarian
         </div>
 
 
-        <!-- LOCATION NAME -->
+        <!-- LOKASI -->
 
-        <div class="location-name">
+        <div class="location">
 
             <small>LOKASI</small>
 
-            <h2 id="hasilLokasi">
-                -
-            </h2>
+            <h2 id="hasilLokasi">-</h2>
 
         </div>
 
@@ -417,6 +371,7 @@
         <!-- DATA -->
 
         <div class="data-grid">
+
 
             <div class="data-card">
 
@@ -428,7 +383,10 @@
                     NEGARA
                 </div>
 
-                <div class="data-value" id="negara">
+                <div
+                    class="data-value"
+                    id="negara"
+                >
                     -
                 </div>
 
@@ -445,7 +403,10 @@
                     PROVINSI
                 </div>
 
-                <div class="data-value" id="provinsi">
+                <div
+                    class="data-value"
+                    id="provinsi"
+                >
                     -
                 </div>
 
@@ -462,7 +423,10 @@
                     KECAMATAN
                 </div>
 
-                <div class="data-value" id="kecamatan">
+                <div
+                    class="data-value"
+                    id="kecamatan"
+                >
                     -
                 </div>
 
@@ -472,57 +436,42 @@
             <div class="data-card">
 
                 <div class="data-icon">
-                    📍
+                    ↔️
                 </div>
 
                 <div class="data-label">
-                    KOORDINAT
+                    LONGITUDE
                 </div>
 
-                <div class="data-value">
-                    <span id="longitude">-</span>,
-                    <span id="latitude">-</span>
+                <div
+                    class="data-value"
+                    id="longitude"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <div class="data-icon">
+                    ↕️
+                </div>
+
+                <div class="data-label">
+                    LATITUDE
+                </div>
+
+                <div
+                    class="data-value"
+                    id="latitude"
+                >
+                    -
                 </div>
 
             </div>
 
-
-            <div class="coordinate">
-
-                <div class="data-card">
-
-                    <div class="data-icon">
-                        ↔️
-                    </div>
-
-                    <div class="data-label">
-                        LONGITUDE
-                    </div>
-
-                    <div class="data-value" id="longitude2">
-                        -
-                    </div>
-
-                </div>
-
-
-                <div class="data-card">
-
-                    <div class="data-icon">
-                        ↕️
-                    </div>
-
-                    <div class="data-label">
-                        LATITUDE
-                    </div>
-
-                    <div class="data-value" id="latitude2">
-                        -
-                    </div>
-
-                </div>
-
-            </div>
 
         </div>
 
@@ -541,7 +490,7 @@
                     class="copy-btn"
                     onclick="copyJSON()"
                 >
-                    📋 Copy JSON
+                    📋 Copy
                 </button>
 
             </div>
@@ -549,9 +498,7 @@
 
             <div class="json-box">
 
-                <pre id="jsonOutput">
-{}
-                </pre>
+                <pre id="jsonOutput">{}</pre>
 
             </div>
 
@@ -561,7 +508,7 @@
 
 
     <footer>
-        Location Finder • Express.js + Axios + MapTiler API
+        Location Finder • Express.js + MapTiler API
     </footer>
 
 </div>
@@ -574,19 +521,22 @@
 
     async function cariLokasi() {
 
-        const input = document.getElementById("lokasi");
-        const button = document.getElementById("btnCari");
-        const status = document.getElementById("status");
+        const input =
+            document.getElementById("lokasi");
 
-        const lokasi = input.value.trim();
+        const button =
+            document.getElementById("btnCari");
+
+        const lokasi =
+            input.value.trim();
 
 
-        // Jika input kosong
+        // INPUT KOSONG
 
         if (!lokasi) {
 
             tampilStatus(
-                "⚠️ Silakan masukkan nama lokasi terlebih dahulu.",
+                "⚠️ Silakan masukkan lokasi.",
                 "error"
             );
 
@@ -596,98 +546,108 @@
         }
 
 
-        // Loading
+        // LOADING
 
         button.disabled = true;
+
         button.innerHTML = "⏳ Mencari...";
 
         tampilStatus(
-            "🔄 Sedang mengambil data lokasi...",
+            "🔄 Mengambil data...",
             "loading"
         );
 
 
         try {
 
-            /*
-                Memanggil endpoint Express kita sendiri.
-
-                Contoh:
-
-                /api/lokasi?lokasi=Yogyakarta
-
-                Express kemudian yang mengambil
-                data dari MapTiler.
-            */
-
             const response = await fetch(
                 `/api/lokasi?lokasi=${encodeURIComponent(lokasi)}`
             );
 
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
-
-            // Jika server mengembalikan error
 
             if (!response.ok) {
 
                 throw new Error(
-                    data.message || "Lokasi tidak ditemukan"
+                    data.message ||
+                    "Lokasi tidak ditemukan"
                 );
 
             }
 
 
-            // Simpan JSON
+            // SIMPAN JSON
 
             jsonData = data;
 
 
-            // Tampilkan hasil
+            // TAMPILKAN DATA
 
-            document.getElementById("hasilLokasi").textContent =
+            document.getElementById(
+                "hasilLokasi"
+            ).textContent =
                 data.lokasi || "-";
 
-            document.getElementById("negara").textContent =
+
+            document.getElementById(
+                "negara"
+            ).textContent =
                 data.negara || "-";
 
-            document.getElementById("provinsi").textContent =
+
+            document.getElementById(
+                "provinsi"
+            ).textContent =
                 data.provinsi || "-";
 
-            document.getElementById("kecamatan").textContent =
+
+            document.getElementById(
+                "kecamatan"
+            ).textContent =
                 data.kecamatan || "-";
 
-            document.getElementById("longitude").textContent =
+
+            document.getElementById(
+                "longitude"
+            ).textContent =
                 data.longitude ?? "-";
 
-            document.getElementById("latitude").textContent =
-                data.latitude ?? "-";
 
-            document.getElementById("longitude2").textContent =
-                data.longitude ?? "-";
-
-            document.getElementById("latitude2").textContent =
+            document.getElementById(
+                "latitude"
+            ).textContent =
                 data.latitude ?? "-";
 
 
-            // Tampilkan JSON
+            // JSON
 
-            document.getElementById("jsonOutput").textContent =
-                JSON.stringify(data, null, 4);
+            document.getElementById(
+                "jsonOutput"
+            ).textContent =
+                JSON.stringify(
+                    data,
+                    null,
+                    4
+                );
 
 
-            // Tampilkan result
+            // TAMPILKAN RESULT
 
-            document.getElementById("emptyState").style.display =
-                "none";
+            document.getElementById(
+                "emptyState"
+            ).style.display = "none";
 
-            document.getElementById("result").style.display =
-                "block";
+
+            document.getElementById(
+                "result"
+            ).style.display = "block";
 
 
             tampilStatus(
-                "✅ Data lokasi berhasil ditemukan!",
+                "✅ Data berhasil ditemukan!",
                 "success"
             );
 
@@ -699,11 +659,14 @@
             console.error(error);
 
 
-            document.getElementById("result").style.display =
-                "none";
+            document.getElementById(
+                "result"
+            ).style.display = "none";
 
-            document.getElementById("emptyState").style.display =
-                "block";
+
+            document.getElementById(
+                "emptyState"
+            ).style.display = "block";
 
 
             tampilStatus(
@@ -725,7 +688,10 @@
     }
 
 
-    function tampilStatus(pesan, tipe) {
+    function tampilStatus(
+        pesan,
+        tipe
+    ) {
 
         const status =
             document.getElementById("status");
@@ -747,25 +713,28 @@
         try {
 
             await navigator.clipboard.writeText(
-                JSON.stringify(jsonData, null, 4)
+                JSON.stringify(
+                    jsonData,
+                    null,
+                    4
+                )
             );
 
 
             const button =
-                document.querySelector(".copy-btn");
+                document.querySelector(
+                    ".copy-btn"
+                );
 
-            const teksLama =
-                button.innerHTML;
 
-
-            button.innerHTML =
+            button.textContent =
                 "✅ Copied!";
 
 
             setTimeout(() => {
 
-                button.innerHTML =
-                    teksLama;
+                button.textContent =
+                    "📋 Copy";
 
             }, 1500);
 
@@ -773,28 +742,37 @@
 
         catch (error) {
 
-            alert("Gagal menyalin JSON.");
+            alert(
+                "Gagal menyalin JSON."
+            );
 
         }
 
     }
 
 
-    // Tekan ENTER untuk mencari
+    // ENTER UNTUK MENCARI
 
     document
         .getElementById("lokasi")
-        .addEventListener("keydown", function(event) {
+        .addEventListener(
+            "keydown",
+            function(event) {
 
-            if (event.key === "Enter") {
+                if (
+                    event.key === "Enter"
+                ) {
 
-                cariLokasi();
+                    cariLokasi();
+
+                }
 
             }
-
-        });
+        );
 
 </script>
 
 </body>
+
 </html>
+
