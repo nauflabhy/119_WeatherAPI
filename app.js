@@ -16,3 +16,5 @@ app.get("/api/lokasi", async (req, res) => {
     }
 
     const apikey = "TmW3n2IbOKaZxkghOoYB";
+
+    const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(lokasi)}.json?key=${apikey}&limit=1&language=id`;
