@@ -190,3 +190,40 @@
             button { width: 100%; }
         }
     </style>
+
+    </head>
+<body>
+    <main>
+        <header class="identity">
+            <div><strong>Muhammad Naufal Abhyasa</strong><br>NIM 20240140119</div>
+            <div class="course">PWS / PRAKTIKUM 03</div>
+        </header>
+
+        <section class="panel" aria-labelledby="page-title">
+            <div class="intro">
+                <p class="eyebrow">Eksplorasi geografi</p>
+                <h1 id="page-title">Temukan sebuah lokasi.</h1>
+                <p class="description">Cari tempat dan lihat detail wilayah serta koordinatnya.</p>
+                <form id="search-form">
+                    <input id="location-input" name="lokasi" type="search" placeholder="Contoh: Yogyakarta" autocomplete="off" required aria-label="Nama lokasi">
+                    <button id="search-button" type="submit">Cari lokasi <span aria-hidden="true">→</span></button>
+                </form>
+            </div>
+
+            <div class="results">
+                <div class="result-heading">
+                    <h2>Detail lokasi</h2>
+                    <span id="result-label">Menunggu pencarian</span>
+                </div>
+                <dl class="data-grid" id="data-grid" hidden>
+                    <div class="data-item"><dt>Lokasi</dt><dd id="result-location">-</dd></div>
+                    <div class="data-item"><dt>Negara</dt><dd id="result-country">-</dd></div>
+                    <div class="data-item"><dt>Provinsi</dt><dd id="result-province">-</dd></div>
+                    <div class="data-item"><dt>Kecamatan</dt><dd id="result-district">-</dd></div>
+                    <div class="data-item coordinates"><dt>Longitude</dt><dd id="result-longitude">-</dd></div>
+                    <div class="data-item coordinates"><dt>Latitude</dt><dd id="result-latitude">-</dd></div>
+                </dl>
+                <p class="status" id="status" role="status" aria-live="polite">Masukkan nama kota atau tempat untuk memulai.</p>
+            </div>
+        </section>
+    </main>
